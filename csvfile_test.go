@@ -32,8 +32,34 @@ func TestAppendFile(t *testing.T) {
   cols[1] = "Col1"
   m := NewCsvMatrix(cols)
 
-  sNew := fmt.Sprintf("Col0, Col1\nv1, v2\nv3, v4")
+  sNew := fmt.Sprintf("Col0,Col1\nv1,v2\nv3,v4")
  
-  //m.AppendCsv(sNew)  
-  //m.DumpCsv()
+  m.AppendCsv(sNew)  
+  if sNew != m.DumpCsv() {
+    t.Errorf("Appended CSV Expected %v Got %v\n", sNew, m.DumpCsv())
+  }
+}
+
+func TestAppendFile3Cols(t *testing.T) {
+  cols := make([]string, 3)
+  cols[0] = "Col0"
+  cols[1] = "Col1"
+  cols[2] = "Col2"
+  m := NewCsvMatrix(cols)
+
+  sNew := fmt.Sprintf("Col0,Col1\nv1,v2\nv3,v4")
+
+  sOut := fmt.Sprintf("Col0,Col1,Col2\nv1,v2,\nv3,v4,")
+ 
+  m.AppendCsv(sNew)  
+  if sOut != m.DumpCsv() {
+    t.Errorf("Appended CSV Expected %v Got %v\n", sOut, m.DumpCsv())
+  }
+
+  sNew = fmt.Sprintf("Col0,Col2\nv1,v5\nv3,v6")
+  m.AppendCsv(sNew)  
+  sOut = fmt.Sprintf("Col0,Col1,Col2\nv1,v2,v5\nv3,v4,v6")
+  if sOut != m.DumpCsv() {
+    t.Errorf("Appended CSV Expected %v Got %v\n", sOut, m.DumpCsv())
+  }
 }
