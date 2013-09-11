@@ -63,12 +63,18 @@ func NewCsvMatrixFromString(s string) CsvMatrix{
   for i:= range lines[1:] {
     tfields := strings.Split(lines[i+1], ",")
     fields := make([]string, len(tfields))
-    for j := range tfields {
-      fields[j] = strings.TrimSpace(tfields[j])
-    } 
-    c.M.AppendRow(fields)
+    if len(fields) > 0 {
+      for j := range tfields {
+        fields[j] = strings.TrimSpace(tfields[j])
+      } 
+
+      if len(fields) > 0 && fields[0] != "" {
+        c.M.AppendRow(fields)
+      }
+    }
   }
   c.RowKeys = make(map[string]bool)
+
   return c
 }
 
@@ -103,9 +109,9 @@ func (m *CsvMatrix) AppendCsv(s string) {
     m.RowKeys[newKeys[idx]] = true
   }
 
-  m.M.AppendArrayToColumn(c.Column(0)[startingLine:], 0)
 
-  m.M.ReplaceArrayInColumn(c.Column(1), m.ColName2Index[c.ColumnNames[1]])
+  m.M.AppendArrayToColumn(c.Column(0)[startingLine:], 0)
+  m.M.ReplaceArrayInColumn(c.Column(1), m.ColName2Index[strings.ToLower(c.ColumnNames[1])])
 }
 
 func (m *CsvMatrix) DumpCsv() string {
